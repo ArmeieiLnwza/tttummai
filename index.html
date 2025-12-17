@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ระบบตรวจสอบครุภัณฑ์</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  * { font-family: 'Prompt', sans-serif; margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    color: #fff;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(180deg, #1a1a1a, #2d2d2d);
+  }
+
+  /* วางรูปภาพด้านหลังเป็น decoration */
+  body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('images/background.jpg') no-repeat center center;
+  background-size: contain; /* หรือ cover ถ้าอยากเต็มหน้าจอ */
+  opacity: 0.15; /* ปรับความโปร่งใส */
+  z-index: -2;
+}
+
+  /* 💜 สเก็ตไฟ */
+  .sparks {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+  }
+
+  .spark {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #a020f0;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #b84aff;
+    animation: fall 4s linear infinite;
+  }
+
+  @keyframes fall {
+    0%   { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+    50%  { opacity: 1; }
+    100% { transform: translateY(110vh) scale(1); opacity: 0; }
+  }
+
+  header {
+    background: rgba(50,0,50,0.85);
+    color: white;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    margin-bottom: 40px;
+  }
+
+  header h1 { font-size: 22px; font-weight: 600; }
+  nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  nav a:hover { opacity: 0.75; }
+
+  .hero {
+    text-align: center;
+    background: rgba(50,0,50,0.3);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    color: #fff;
+    padding: 100px 20px;
+    margin: 60px auto;
+    width: 80%;
+    max-width: 900px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  }
+
+  .hero h2 { font-size: 36px; font-weight: 700; }
+  .hero p { margin-top: 10px; font-size: 16px; }
+  .btn-start {
+    margin-top: 25px;
+    background: #a020f0; 
+    color: white;
+    padding: 12px 30px; 
+    border-radius: 25px;
+    border: none; 
+    font-weight: 600; 
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .btn-start:hover { background: #c050ff; }
+
+  .features {
+    display: flex; justify-content: center; gap: 20px;
+    flex-wrap: wrap; margin: 50px auto; max-width: 1000px;
+  }
+
+  .card {
+    background: rgba(50,0,50,0.5);
+    backdrop-filter: blur(6px);
+    width: 300px; padding: 25px;
+    border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: center; transition: 0.3s;
+  }
+  .card:hover { transform: translateY(-5px); }
+  .icon { font-size: 40px; color: #b84aff; }
+
+  /* POPUP */
+  .popup-bg {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .popup-box {
+    background: #1a001a;
+    width: 330px;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    color: #fff;
+    animation: popupShow 0.5s ease forwards;
+  }
+
+  @keyframes popupShow {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .popup-box .check { font-size: 50px; color: #c050ff; }
+  .popup-box button {
+    margin-top: 20px;
+    padding: 10px 30px;
+    border-radius: 12px;
+    border: none;
+    background: #a020f0;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .popup-box button:hover { background: #b84aff; }
+
+</style>
+</head>
+
+<body>
+
+<!-- 💜 สเก็ตไฟ -->
+<div class="sparks" id="sparksContainer"></div>
+<script>
+const container = document.getElementById("sparksContainer");
+for (let i=0; i<50; i++){
+  const spark = document.createElement("div");
+  spark.classList.add("spark");
+  spark.style.left = Math.random() * 100 + "vw";
+  spark.style.animationDelay = Math.random() * 4 + "s";
+  spark.style.width = 2 + Math.random()*3 + "px";
+  spark.style.height = spark.style.width;
+  container.appendChild(spark);
+}
+</script>
+
+<header>
+  <h1>ระบบตรวจสอบครุภัณฑ์</h1>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="equipment.html">ค้นหาครุภัณฑ์</a>
+    <a href="index.html?logout=success">ออกจากระบบ</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>ตรวจสอบ & เช็กสเปค<br>อุปกรณ์ได้ในคลิกเดียว</h2>
+  <p>จัดการครุภัณฑ์คอมพิวเตอร์ในแผนกได้อย่างง่ายดายและรวดเร็ว</p>
+  <button class="btn-start" onclick="location.href='equipment.html'">เริ่มใช้งาน</button>
+</section>
+
+
+
+<!-- POPUP -->
+<div class="popup-bg" id="loginPopup">
+  <div class="popup-box">
+    <div class="check" id="popupIcon">✔</div>
+    <h3 id="popupText">ข้อความ</h3>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const popup = document.getElementById("loginPopup");
+const popupText = document.getElementById("popupText");
+const popupIcon = document.getElementById("popupIcon");
+let redirectToLogin = false;
+
+// login popup
+if (urlParams.get("login") === "success") {
+  popupText.innerText = "เข้าสู่ระบบสำเร็จ!";
+  popupIcon.innerText = "🎉";
+  popup.style.display = "flex";
+}
+
+// logout popup
+if (urlParams.get("logout") === "success") {
+  popupText.innerText = "ออกจากระบบแล้ว";
+  popupIcon.innerText = "✔";
+  popup.style.display = "flex";
+  redirectToLogin = true;
+}
+
+function closePopup(){
+  popup.style.display = "none";
+  if (redirectToLogin) {
+    window.location.href = "login.html";
+  } else {
+    window.history.replaceState({}, '', "index.html");
+  }
+}
+</script>
+
+</body>
+</html>
