@@ -1,271 +1,264 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>หน้าผู้ดูแลระบบ</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ระบบตรวจสอบครุภัณฑ์</title>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{font-family:'Prompt',sans-serif;margin:0;padding:0;box-sizing:border-box;}
-body{
-  background:linear-gradient(180deg,#1a1a1a,#2d2d2d);
-  color:white;
-  min-height:100vh;
-  padding:20px;
-  overflow-x:hidden;
+  * { font-family: 'Prompt', sans-serif; margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    color: #fff;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(180deg, #1a1a1a, #2d2d2d);
+  }
+
+  /* วางรูปภาพด้านหลังเป็น decoration */
+  body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('images/background.jpg') no-repeat center center;
+  background-size: contain; /* หรือ cover ถ้าอยากเต็มหน้าจอ */
+  opacity: 0.15; /* ปรับความโปร่งใส */
+  z-index: -2;
 }
 
-/* ===== Sparks ===== */
-.sparks{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;}
-.spark{position:absolute;width:3px;height:3px;background:#a020f0;border-radius:50%;box-shadow:0 0 6px #c050ff;animation:fall 4s linear infinite;}
-@keyframes fall{
-  0%{transform:translateY(-10vh);opacity:0;}
-  50%{opacity:1;}
-  100%{transform:translateY(110vh);opacity:0;}
-}
+  /* 💜 สเก็ตไฟ */
+  .sparks {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+  }
 
-/* ===== Header ===== */
-header{
-  background:rgba(50,0,50,.85);
-  padding:20px 40px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-radius:14px;
-  margin-bottom:30px;
-  backdrop-filter:blur(10px);
-}
-nav a{color:white;text-decoration:none;margin-left:20px;font-weight:500;}
-nav a:hover{opacity:.7}
+  .spark {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #a020f0;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #b84aff;
+    animation: fall 4s linear infinite;
+  }
 
-/* ===== Container ===== */
-.container{
-  background:rgba(50,0,50,.5);
-  padding:30px;
-  border-radius:20px;
-  backdrop-filter:blur(10px);
-  max-width:1100px;
-  margin:auto;
-}
+  @keyframes fall {
+    0%   { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+    50%  { opacity: 1; }
+    100% { transform: translateY(110vh) scale(1); opacity: 0; }
+  }
 
-.add-btn{background:#4caf50;color:white;padding:10px 18px;border:none;border-radius:14px;font-weight:600;cursor:pointer;}
-.edit-btn{background:#a020f0;color:white;padding:6px 14px;border:none;border-radius:10px;}
-.del-btn{background:#e53935;color:white;padding:6px 14px;border:none;border-radius:10px;}
+  header {
+    background: rgba(50,0,50,0.85);
+    color: white;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    margin-bottom: 40px;
+  }
 
-.status-ok{color:#4ade80;font-weight:600;}
-.status-broken{color:#f87171;font-weight:600;}
+  header h1 { font-size: 22px; font-weight: 600; }
+  nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  nav a:hover { opacity: 0.75; }
 
-table{width:100%;border-collapse:collapse;margin-top:15px;}
-th,td{padding:12px;border-bottom:1px solid rgba(255,255,255,.2);text-align:center;}
+  .hero {
+    text-align: center;
+    background: rgba(50,0,50,0.3);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    color: #fff;
+    padding: 100px 20px;
+    margin: 60px auto;
+    width: 80%;
+    max-width: 900px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  }
 
-/* ===== Search ===== */
-.search-box{
-  display:flex;
-  justify-content:center;
-  margin:15px 0;
-}
-.search-box input{
-  width:60%;
-  padding:12px 16px;
-  border-radius:14px;
-  border:none;
-  outline:none;
-}
+  .hero h2 { font-size: 36px; font-weight: 700; }
+  .hero p { margin-top: 10px; font-size: 16px; }
+  .btn-start {
+    margin-top: 25px;
+    background: #a020f0; 
+    color: white;
+    padding: 12px 30px; 
+    border-radius: 25px;
+    border: none; 
+    font-weight: 600; 
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .btn-start:hover { background: #c050ff; }
 
-/* ===== Popup Edit ===== */
-.edit-popup{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.7);
-  backdrop-filter:blur(6px);
-  justify-content:center;
-  align-items:center;
-  z-index:999;
-}
-.edit-box{
-  background:#1a001a;
-  padding:30px;
-  border-radius:20px;
-  width:360px;
-  text-align:center;
-  animation:popupShow .4s ease forwards;
-}
-@keyframes popupShow{
-  from{transform:translateY(40px);opacity:0;}
-  to{transform:translateY(0);opacity:1;}
-}
-.edit-box input,.edit-box select{
-  width:85%;
-  margin:8px 0;
-  padding:8px 10px;
-  border-radius:10px;
-  border:none;
-}
-.edit-box button{
-  margin-top:15px;
-  padding:10px 30px;
-  border:none;
-  border-radius:12px;
-  background:#a020f0;
-  color:white;
-  font-weight:600;
-}
+  .features {
+    display: flex; justify-content: center; gap: 20px;
+    flex-wrap: wrap; margin: 50px auto; max-width: 1000px;
+  }
+
+  .card {
+    background: rgba(50,0,50,0.5);
+    backdrop-filter: blur(6px);
+    width: 300px; padding: 25px;
+    border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: center; transition: 0.3s;
+  }
+  .card:hover { transform: translateY(-5px); }
+  .icon { font-size: 40px; color: #b84aff; }
+
+  /* POPUP */
+  .popup-bg {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    backdrop-filter: blur(6px);
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .popup-box {
+    background: #1a001a;
+    width: 330px;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+    color: #fff;
+    animation: popupShow 0.5s ease forwards;
+  }
+
+  @keyframes popupShow {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .popup-box .check { font-size: 50px; color: #c050ff; }
+  .popup-box button {
+    margin-top: 20px;
+    padding: 10px 30px;
+    border-radius: 12px;
+    border: none;
+    background: #a020f0;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .popup-box button:hover { background: #b84aff; }
+
 </style>
 </head>
 
 <body>
 
-<div class="sparks" id="sparks"></div>
-
+<!-- 💜 สเก็ตไฟ -->
+<div class="sparks" id="sparksContainer"></div>
 <script>
-if(localStorage.getItem("userRole")!=="admin"){
-  window.location.href="login.html";
+const container = document.getElementById("sparksContainer");
+for (let i=0; i<50; i++){
+  const spark = document.createElement("div");
+  spark.classList.add("spark");
+  spark.style.left = Math.random() * 100 + "vw";
+  spark.style.animationDelay = Math.random() * 4 + "s";
+  spark.style.width = 2 + Math.random()*3 + "px";
+  spark.style.height = spark.style.width;
+  container.appendChild(spark);
 }
 </script>
 
 <header>
-  <h2>จัดการครุภัณฑ์ (Admin)</h2>
+  <h1>ระบบตรวจสอบครุภัณฑ์</h1>
   <nav>
     <a href="index.html">หน้าแรก</a>
-    <a href="equipment.html">ครุภัณฑ์</a>
+    <a href="equipment.html">ค้นหาครุภัณฑ์</a>
     <a href="#" onclick="logout()">ออกจากระบบ</a>
   </nav>
 </header>
 
-<div class="container">
-  <button class="add-btn" onclick="openAddPopup()">+ เพิ่มข้อมูล</button>
+<section class="hero">
+  <h2>ตรวจสอบ & เช็กสเปค<br>อุปกรณ์ได้ในคลิกเดียว</h2>
+  <p>จัดการครุภัณฑ์คอมพิวเตอร์ในแผนกได้อย่างง่ายดายและรวดเร็ว</p>
+  <button class="btn-start" onclick="location.href='equipment.html'">เริ่มใช้งาน</button>
+</section>
 
-  <!-- 🔍 Search -->
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="ค้นหาเลขครุภัณฑ์ / รายการ / ห้อง / สถานะ">
-  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>เลขครุภัณฑ์</th>
-        <th>รายการ</th>
-        <th>ห้อง</th>
-        <th>สถานะ</th>
-        <th>วันที่ตรวจ</th>
-        <th>จัดการ</th>
-      </tr>
-    </thead>
-    <tbody id="dataTable"></tbody>
-  </table>
-</div>
 
-<!-- Popup -->
-<div class="edit-popup" id="editPopup">
-  <div class="edit-box">
-    <h3>เพิ่ม / แก้ไข ครุภัณฑ์</h3>
-    <input id="editCode" placeholder="เลขครุภัณฑ์">
-    <input id="editItem" placeholder="รายการ">
-    <input id="editRoom" placeholder="ห้อง">
-    <input id="editDate" placeholder="วันที่ตรวจ">
-    <select id="editStatus">
-      <option>พร้อมใช้งาน</option>
-      <option>ชำรุด</option>
-    </select>
-    <button onclick="saveEdit()">บันทึก</button>
+<!-- POPUP -->
+<div class="popup-bg" id="loginPopup">
+  <div class="popup-box">
+    <div class="check" id="popupIcon">✔</div>
+    <h3 id="popupText">ข้อความ</h3>
+    <button onclick="closePopup()">OK</button>
   </div>
 </div>
 
 <script>
-/* ===== Sparks ===== */
-const sp=document.getElementById("sparks");
-for(let i=0;i<50;i++){
-  const s=document.createElement("div");
-  s.className="spark";
-  s.style.left=Math.random()*100+"vw";
-  s.style.animationDelay=Math.random()*4+"s";
-  sp.appendChild(s);
+ // เช็คว่าผู้ใช้ล็อกอินหรือยัง
+if(!localStorage.getItem("userRole")) {
+    // ถ้ายังไม่ได้ล็อกอิน → ส่งไปหน้า login.html
+    window.location.replace("login.html");
+}
+const urlParams = new URLSearchParams(window.location.search);
+const popup = document.getElementById("loginPopup");
+const popupText = document.getElementById("popupText");
+const popupIcon = document.getElementById("popupIcon");
+let redirectToLogin = false;
+
+// login popup
+if (urlParams.get("login") === "success") {
+  popupText.innerText = "เข้าสู่ระบบสำเร็จ!";
+  popupIcon.innerText = "🎉";
+  popup.style.display = "flex";
 }
 
-/* ===== Data ===== */
-let items=JSON.parse(localStorage.getItem("equipmentData"))||[];
-let currentIndex=null,isAdd=false;
+// logout popup
+if (urlParams.get("logout") === "success") {
+  popupText.innerText = "ออกจากระบบแล้ว";
+  popupIcon.innerText = "✔";
+  popup.style.display = "flex";
+  redirectToLogin = true;
+}
 
-/* ===== Render ===== */
-function renderTable(data=items){
-  const tb=document.getElementById("dataTable");
-  tb.innerHTML="";
-  if(data.length===0){
-    tb.innerHTML=`<tr><td colspan="6" style="opacity:.6">ไม่พบข้อมูล</td></tr>`;
-    return;
-  }
-  data.forEach(it=>{
-    const idx=items.indexOf(it);
-    tb.innerHTML+=`
-    <tr>
-      <td>${it.code}</td>
-      <td>${it.name}</td>
-      <td>${it.room}</td>
-      <td class="${it.status==="พร้อมใช้งาน"?"status-ok":"status-broken"}">${it.status}</td>
-      <td>${it.date}</td>
-      <td>
-        <button class="edit-btn" onclick="openEditPopup(${idx})">แก้ไข</button>
-        <button class="del-btn" onclick="deleteItem(${idx})">ลบ</button>
-      </td>
-    </tr>`;
-  });
-}
-renderTable();
-
-/* ===== Search ===== */
-document.getElementById("searchInput").addEventListener("input",e=>{
-  const k=e.target.value.toLowerCase();
-  renderTable(items.filter(it=>
-    it.code.toLowerCase().includes(k)||
-    it.name.toLowerCase().includes(k)||
-    it.room.toLowerCase().includes(k)||
-    it.status.toLowerCase().includes(k)
-  ));
-});
-
-/* ===== CRUD ===== */
-function openAddPopup(){
-  isAdd=true;currentIndex=null;
-  editCode.value=editItem.value=editRoom.value=editDate.value="";
-  editStatus.value="พร้อมใช้งาน";
-  editPopup.style.display="flex";
-}
-function openEditPopup(i){
-  isAdd=false;currentIndex=i;
-  const it=items[i];
-  editCode.value=it.code;
-  editItem.value=it.name;
-  editRoom.value=it.room;
-  editDate.value=it.date;
-  editStatus.value=it.status;
-  editPopup.style.display="flex";
-}
-function saveEdit(){
-  const obj={
-    code:editCode.value,
-    name:editItem.value,
-    room:editRoom.value,
-    date:editDate.value,
-    status:editStatus.value
-  };
-  if(isAdd) items.push(obj);
-  else items[currentIndex]=obj;
-  localStorage.setItem("equipmentData",JSON.stringify(items));
-  editPopup.style.display="none";
-  renderTable();
-}
-function deleteItem(i){
-  if(confirm("ลบข้อมูลนี้?")){
-    items.splice(i,1);
-    localStorage.setItem("equipmentData",JSON.stringify(items));
-    renderTable();
+function closePopup(){
+  popup.style.display = "none";
+  if (redirectToLogin) {
+    window.location.href = "login.html";
+  } else {
+    window.history.replaceState({}, '', "index.html");
   }
 }
 function logout(){
-  localStorage.removeItem("userRole");
-  location.href="login.html";
+    // ล้างค่า userRole
+    localStorage.removeItem("userRole"); 
+
+    // แสดง popup
+    popupText.innerText = "ออกจากระบบแล้ว";
+    popupIcon.innerText = "✔";
+    popup.style.display = "flex";
+
+    // รอ 2 วินาที แล้วไปหน้า login
+    setTimeout(() => {
+        window.location.href = "login.html";
+    }, 2000);
 }
 </script>
 
