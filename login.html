@@ -100,6 +100,12 @@ for(let i=0;i<50;i++){
 </div>
 
 <script>
+  // เช็คว่า user ล็อกอินหรือยัง
+const role = localStorage.getItem("userRole");
+if(!role){
+  // ถ้ายังไม่ได้ล็อกอิน → ส่งไป login.html
+  window.location.replace("login.html");
+}
 // ---------------------------
 // บัญชีแอดมิน
 // ---------------------------
@@ -164,3 +170,4 @@ function goUser(){
 
 </body>
 </html>
+
