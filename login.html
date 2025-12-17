@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เข้าสู่ระบบผู้ใช้งาน</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { font-family: 'Prompt', sans-serif; margin:0; padding:0; box-sizing:border-box; }
+body { background: linear-gradient(180deg,#1a1a1a,#2d2d2d); min-height:100vh; padding:20px; color:#fff; position:relative; overflow-x:hidden; }
+
+.sparks { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:hidden; z-index:-1; }
+.spark { position:absolute; width:3px; height:3px; background:#a020f0; border-radius:50%; box-shadow:0 0 6px #b84aff; animation: fall 4s linear infinite; }
+@keyframes fall { 0% {transform:translateY(-10vh) scale(0.5);opacity:0;} 50% {opacity:1;} 100% {transform:translateY(110vh) scale(1);opacity:0;} }
+
+header { background: rgba(50,0,50,0.85); color:white; padding:20px 50px; display:flex; justify-content:space-between; align-items:center; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); margin-bottom:40px; }
+header h1{font-size:22px;font-weight:600;}
+nav a{color:white;text-decoration:none;margin-left:20px;font-weight:500;transition:0.2s;}
+nav a:hover{opacity:0.75;}
+
+.container { display:flex; justify-content:center; align-items:center; height:80vh; }
+.login-box { background: rgba(50,0,50,0.5); backdrop-filter:blur(10px); padding:40px 50px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.5); width:350px; text-align:center; color:white; }
+.login-box h2 { margin-bottom:20px; font-size:22px; color:#fff; }
+
+.login-box input[type="text"], 
+.login-box input[type="password"] {
+  width:100%; padding:12px; margin:10px 0; border:none; border-radius:10px;
+  font-size:16px; outline:none; background: rgba(255,255,255,0.15); color:#fff;
+}
+
+.login-box button {
+  width:100%; padding:12px; background:#a020f0; border:none; border-radius:10px;
+  color:white; font-size:16px; cursor:pointer; transition:0.3s; margin-top:10px;
+}
+.login-box button:hover { background:#b84aff; }
+
+.error { color: #ff6b6b; margin-top: 10px; font-size: 14px; }
+
+/* POPUP */
+.success-popup { position: fixed; inset:0; background: rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:9999; }
+.success-box { background: #1a1a1a; width:420px; padding:40px; border-radius:20px; text-align:center; color:#fff; animation: popupShow 0.6s ease-out; border:2px solid #a020f0; }
+
+@keyframes popupShow {0%{transform:scale(0.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+.checkmark { font-size:90px; color:#4ade80; font-weight:bold; margin-bottom:10px; display:block; }
+
+.ok-btn {
+  width:100%; margin-top:25px; padding:14px; background:#a020f0; border:none;
+  color:#fff; font-size:18px; border-radius:10px; cursor:pointer;
+}
+.ok-btn:hover { background:#b84aff; }
+</style>
+</head>
+
+<body>
+
+<!-- พื้นหลังประกาย -->
+<div class="sparks" id="sparksContainer"></div>
+<script>
+const container = document.getElementById("sparksContainer");
+for(let i=0;i<50;i++){
+  const spark=document.createElement("div");
+  spark.classList.add("spark");
+  spark.style.left=Math.random()*100+"vw";
+  spark.style.animationDelay=Math.random()*4+"s";
+  spark.style.width=2+Math.random()*3+"px";
+  spark.style.height=spark.style.width;
+  container.appendChild(spark);
+}
+</script>
+
+<header>
+<h1>ระบบตรวจสอบครุภัณฑ์</h1>
+<nav><a href="login.html">เข้าสู่ระบบ</a></nav>
+</header>
+
+<div class="container">
+<div class="login-box">
+<h2>เข้าสู่ระบบผู้ใช้งาน</h2>
+
+<form id="loginForm">
+  <input type="text" id="email" placeholder="อีเมล" required>
+  <input type="password" id="password" placeholder="รหัสผ่าน" required>
+  <button type="submit">เข้าสู่ระบบ</button>
+  <div class="error" id="errorMsg"></div>
+</form>
+
+</div>
+</div>
+
+<!-- Popup -->
+<div class="success-popup" id="successPopup">
+  <div class="success-box">
+      <div class="checkmark">✔</div>
+      <h2 style="font-size:24px; margin-bottom:5px;">สำเร็จ</h2>
+      <p style="font-size:18px;">เข้าสู่ระบบสำเร็จ</p>
+      <button class="ok-btn" onclick="goUser()">OK</button>
+  </div>
+</div>
+
+<script>
+// ---------------------------
+// บัญชีแอดมิน
+// ---------------------------
+const adminAccount = {
+  email: "admin@example.com",
+  password: "ADMIN123"
+};
+
+// ---------------------------
+// บัญชีครู
+// ---------------------------
+const teacherAccounts = [
+  { email: "teacher1@example.com", password: "DBT1"},
+  { email: "teacher2@example.com", password: "DBT2"},
+  { email: "teacher3@example.com", password: "DBT3"},
+  { email: "teacher4@example.com", password: "DBT4"},
+  { email: "teacher5@example.com", password: "DBT5"},
+  { email: "teacher6@example.com", password: "DBT6"}
+];
+
+const form = document.getElementById("loginForm");
+const errorMsg = document.getElementById("errorMsg");
+let nextPage = "index.html"; // ค่า default
+
+// ---------------------------
+// ระบบ Login
+// ---------------------------
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const emailInput = document.getElementById("email").value;
+  const passwordInput = document.getElementById("password").value;
+
+  // ตรวจสอบแอดมินก่อน
+  if (emailInput === adminAccount.email && passwordInput === adminAccount.password) {
+      localStorage.setItem("userRole", "admin");
+      nextPage = "admin.html";
+      document.getElementById("successPopup").style.display = "flex";
+      return;
+  }
+
+  // ตรวจสอบครู/ผู้ใช้ทั่วไป
+  const account = teacherAccounts.find(acc => acc.email === emailInput && acc.password === passwordInput);
+
+  if(account){
+      localStorage.setItem("userRole", "user");
+      nextPage = "index.html";
+      document.getElementById("successPopup").style.display="flex";
+  } 
+  else {
+      errorMsg.textContent = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+  }
+});
+
+// ---------------------------
+// เมื่อกดปุ่ม OK
+// ---------------------------
+function goUser(){
+  window.location.href = nextPage;
+}
+</script>
+
+</body>
+</html>

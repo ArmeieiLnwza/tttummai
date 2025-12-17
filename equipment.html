@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รายการครุภัณฑ์</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{font-family:'Prompt',sans-serif;margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:linear-gradient(180deg,#1a1a1a,#2d2d2d);
+  color:white;
+  min-height:100vh;
+  padding:20px;
+  overflow-x:hidden;
+}
+
+/* ===== Sparks ===== */
+.sparks{
+  position:fixed;
+  top:0;left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:-1;
+}
+.spark{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background:#a020f0;
+  border-radius:50%;
+  box-shadow:0 0 6px #c050ff;
+  animation:fall 4s linear infinite;
+}
+@keyframes fall{
+  0%{transform:translateY(-10vh);opacity:0;}
+  50%{opacity:1;}
+  100%{transform:translateY(110vh);opacity:0;}
+}
+
+/* ===== Header ===== */
+header{
+  background:rgba(50,0,50,.85);
+  padding:20px 40px;
+  border-radius:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 5px 15px rgba(0,0,0,.4);
+}
+nav a{
+  color:white;
+  text-decoration:none;
+  margin-left:20px;
+  font-weight:500;
+}
+nav a:hover{opacity:.7}
+
+/* ===== Container ===== */
+.container{
+  max-width:1000px;
+  margin:auto;
+  background:rgba(50,0,50,.5);
+  padding:30px;
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 20px rgba(0,0,0,.4);
+}
+
+/* ===== Search ===== */
+.search-box{
+  display:flex;
+  justify-content:center;
+  margin-bottom:20px;
+}
+.search-box input{
+  width:60%;
+  padding:12px 18px;
+  border-radius:14px;
+  border:none;
+  outline:none;
+  font-size:15px;
+}
+
+/* ===== Table ===== */
+table{width:100%;border-collapse:collapse;}
+th,td{
+  padding:12px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,.2);
+}
+.status-ok{color:#4ade80;font-weight:600;}
+.status-broken{color:#f87171;font-weight:600;}
+.no-data{text-align:center;opacity:.6;padding:20px;}
+
+/* ===== Popup ===== */
+.popup-bg{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(6px);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+.popup-box{
+  background:#1a001a;
+  padding:30px;
+  border-radius:18px;
+  text-align:center;
+  animation:popupShow .4s ease forwards;
+}
+@keyframes popupShow{
+  from{transform:translateY(40px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+.popup-box h3{margin-bottom:15px;}
+.popup-box button{
+  margin-top:20px;
+  padding:10px 30px;
+  border:none;
+  border-radius:12px;
+  background:#a020f0;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+.popup-box button:hover{background:#c050ff;}
+</style>
+</head>
+
+<body>
+
+<!-- Sparks -->
+<div class="sparks" id="sparks"></div>
+
+<header>
+  <h2>รายการครุภัณฑ์</h2>
+  <nav>
+    <a href="index.html">หน้าแรก</a>
+    <a href="equipment.html">ครุภัณฑ์</a>
+    <a href="admin.html" id="adminLink" style="display:none;">จัดการครุภัณฑ์</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="ค้นหาเลขครุภัณฑ์ / รายการ / ห้อง">
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>เลขครุภัณฑ์</th>
+        <th>รายการ</th>
+        <th>ห้อง</th>
+        <th>สถานะ</th>
+        <th>วันที่ตรวจล่าสุด</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<!-- Popup -->
+<div class="popup-bg" id="popup">
+  <div class="popup-box">
+    <h3>ไม่มีข้อมูลครุภัณฑ์</h3>
+    <button onclick="closePopup()">ตกลง</button>
+  </div>
+</div>
+
+<script>
+/* ===== Sparks ===== */
+const sparks=document.getElementById("sparks");
+for(let i=0;i<50;i++){
+  const s=document.createElement("div");
+  s.className="spark";
+  s.style.left=Math.random()*100+"vw";
+  s.style.animationDelay=Math.random()*4+"s";
+  sparks.appendChild(s);
+}
+
+/* ===== Admin link ===== */
+if(localStorage.getItem("userRole")==="admin"){
+  document.getElementById("adminLink").style.display="inline";
+}
+
+/* ===== Seed data ===== */
+if(!localStorage.getItem("equipmentData")){
+  localStorage.setItem("equipmentData",JSON.stringify([
+    {code:"EQ-001",name:"คอมพิวเตอร์",room:"ห้องคอม",status:"พร้อมใช้งาน",date:"01/01/2025"}
+  ]));
+}
+
+let data=JSON.parse(localStorage.getItem("equipmentData"))||[];
+
+/* ===== Render ===== */
+function render(arr){
+  const tb=document.getElementById("tableBody");
+  tb.innerHTML="";
+  if(arr.length===0){
+    document.getElementById("popup").style.display="flex";
+    return;
+  }
+  arr.forEach(i=>{
+    tb.innerHTML+=`
+      <tr>
+        <td>${i.code}</td>
+        <td>${i.name}</td>
+        <td>${i.room}</td>
+        <td class="${i.status==="พร้อมใช้งาน"?"status-ok":"status-broken"}">${i.status}</td>
+        <td>${i.date||"-"}</td>
+      </tr>`;
+  });
+}
+render(data);
+
+/* ===== Search ===== */
+document.getElementById("searchInput").addEventListener("input",e=>{
+  const k=e.target.value.toLowerCase();
+  render(data.filter(i=>
+    i.code.toLowerCase().includes(k)||
+    i.name.toLowerCase().includes(k)||
+    i.room.toLowerCase().includes(k)
+  ));
+});
+
+/* ===== Popup ===== */
+function closePopup(){
+  document.getElementById("popup").style.display="none";
+}
+</script>
+
+</body>
+</html>
