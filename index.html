@@ -212,6 +212,11 @@ for (let i=0; i<50; i++){
 </div>
 
 <script>
+ // เช็คว่าผู้ใช้ล็อกอินหรือยัง
+if(!localStorage.getItem("userRole")) {
+    // ถ้ายังไม่ได้ล็อกอิน → ส่งไปหน้า login.html
+    window.location.replace("login.html");
+}
 const urlParams = new URLSearchParams(window.location.search);
 const popup = document.getElementById("loginPopup");
 const popupText = document.getElementById("popupText");
@@ -245,3 +250,4 @@ function closePopup(){
 
 </body>
 </html>
+
